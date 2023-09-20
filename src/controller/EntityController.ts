@@ -47,4 +47,16 @@ export abstract class EntityController<T> extends Controller {
 
     return { count: count * 1, items };
   }
+
+  async save(request: Request, response: Response, next: NextFunction) {
+    const data = this.collect(request);
+    let filtered = await this.addValidator.validate(data, {
+      abortEarly: false,
+    });
+    
+    const entity = await this.registry.repository.save(filtered);
+
+    console.log({filtered, entity});
+    return await this.registry.getById(entity.id, this.registry);
+  }
 }

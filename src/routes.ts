@@ -17,6 +17,13 @@ const routes: Route[] = [
     action: "all",
     public:  true,
   },
+  {
+    method: "post",
+    path: "/tasks",
+    controller: TaskController,
+    action: "save",
+    public:  true,
+  },
 ];
 
 export type { Route };

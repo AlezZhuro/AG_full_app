@@ -9,7 +9,12 @@ export let add = yup
       .trim()
       .min(1)
       .max(255),
-      completed: yup.boolean().default(false),
-    description: yup.number().required(),
+    description: yup
+      .string()
+      .required()
+      .trim()
+      .min(1)
+      .max(255),
+    completed: yup.boolean().default(false),
   })
   .noUnknown(true);
