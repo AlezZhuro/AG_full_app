@@ -1,0 +1,28 @@
+{
+  "name": "backend_full_app",
+  "version": "0.0.1",
+  "license": "MIT",
+  "scripts": {
+    "start": "node build/src/index.ts",
+    "build": "tsc",
+    "startdev": "nodemon src/index.ts",
+    "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js",
+    "migrate": "npm run -- typeorm migration:run -d ./src/database/Migration.ts"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "pg": "^8.11.3",
+    "typeorm": "^0.3.17",
+    "yup": "^1.2.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.17",
+    "@types/node": "^20.6.2",
+    "nodemon": "^3.0.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  }
+}
