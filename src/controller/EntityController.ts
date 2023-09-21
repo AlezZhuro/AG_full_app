@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 
 import { Controller } from "./Controller";
 import { getOrder, getPager } from "../services/Request";
-import { APIError, HttpStatusCode } from "../error/error";
+import { NotFoundError } from "../error/error";
 
 /**
  * Manipulate entities abstract class
@@ -23,26 +23,32 @@ export abstract class EntityController<T> extends Controller {
     super();
   }
 
-  async all(request: Request, response: Response, next: NextFunction) {
+  async all(request: Request, response?: Response, next?: NextFunction, whereCondition?: any) {
     const data = this.collect(request);
 
+    let where;
+
+    if (!!whereCondition && !!Object.keys(whereCondition).length) {
+      where = whereCondition;
+    }
+    
     let pager = await getPager(data);
     let order = await getOrder(this.registry, data, this.defaultOrder, this.defaultDir);
   
     if (this.getManyRelations) {
       var [items, count] = await this.registry.repository.findAndCount({
-        relations: {
-          subtasks: true,
-        },
+        relations: this.getManyRelations,
         order: order,
         skip: pager.page * pager.limit,
         take: pager.limit,
+        where,
       });
     } else {
       var [items, count] = await this.registry.repository.findAndCount({
         order: order,
         skip: pager.page * pager.limit,
         take: pager.limit,
+        where,
       });
     }
 
@@ -69,7 +75,7 @@ export abstract class EntityController<T> extends Controller {
       let entity = await this.registry.repository.findOneBy({ id });
 
       if (!entity) {
-        throw new APIError("NOT FOUND", HttpStatusCode.NOT_FOUND, "not found");
+        throw new NotFoundError("NOT FOUND");
       }
 
       let result = await this.registry.repository.remove(entity);

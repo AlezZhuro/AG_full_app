@@ -1,3 +1,4 @@
+import { SubtaskController } from "./controller/SubtaskController";
 import { TaskController } from "./controller/TaskController";
 
 
@@ -43,6 +44,13 @@ const routes: Route[] = [
     path: "/tasks/:id",
     controller: TaskController,
     action: "patch",
+    public:  true,
+  },
+  {
+    method: "get",
+    path: "/task/:id/all",
+    controller: SubtaskController,
+    action: "allSubtask",
     public:  true,
   },
 ];
