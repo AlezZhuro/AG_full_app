@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 
 import { Controller } from "./Controller";
 import { getOrder, getPager } from "../services/Request";
+import { APIError, HttpStatusCode } from "../error/error";
 
 /**
  * Manipulate entities abstract class
@@ -58,5 +59,25 @@ export abstract class EntityController<T> extends Controller {
 
     console.log({filtered, entity});
     return await this.registry.getById(entity.id, this.registry);
+  }
+
+  async remove(request: Request, response: Response, next: NextFunction) {
+    try {
+      const id = await this.idValidator.validate( +request.params.id, {
+        abortEarly: false,
+      });
+
+      let entity = await this.registry.repository.findOneBy({ id });
+
+      if (!entity) {
+        throw new APIError("NOT FOUND", HttpStatusCode.NOT_FOUND, "not found");
+      }
+
+      let result = await this.registry.repository.remove(entity);
+      return !!result;
+    } catch (error) {
+      // handle error
+      next(error);
+    }
   }
 }
