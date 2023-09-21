@@ -21,7 +21,7 @@ export class SubtaskController extends EntityController<Subtask> {
 
   async allSubtask(request: Request, response: Response, next: NextFunction) {
     try {
-      const { taskEntity, taskId } = await this.getParentEntityById(request);
+      const { taskEntity, taskId } = await this.getParentTaskById(request);
 
       const where = { task: { id: taskId } };
 
@@ -43,13 +43,16 @@ export class SubtaskController extends EntityController<Subtask> {
     next: NextFunction,
   ) {
     try {
-      const { taskEntity, taskId } = await this.getParentEntityById(request);
+      const { taskId } = await this.getParentTaskById(request);
 
       const data = this.collect(request);
 
-      let filtered = await this.addValidator.validate(Object.assign(data, {task: {id: taskId}}), {
-        abortEarly: false,
-      });      
+      let filtered = await this.addValidator.validate(
+        Object.assign(data, { task: { id: taskId } }),
+        {
+          abortEarly: false,
+        },
+      );
 
       const entity = await this.registry.repository.save(filtered);
 
@@ -60,7 +63,7 @@ export class SubtaskController extends EntityController<Subtask> {
     }
   }
 
-  async getParentEntityById(request: Request) {
+  async getParentTaskById(request: Request) {
     const taskId = await this.getEntityId(request);
 
     const taskEntity = await this.registry.getById(taskId, TaskRegistry);
