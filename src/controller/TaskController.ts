@@ -7,8 +7,9 @@ export class TaskController extends EntityController<Task> {
   constructor(
     registry = Registry,
     addValidator = addSchema,
+    getOneRelations = null,
     getManyRelations = ['subtasks'],
   ) {
-    super(registry, addValidator, getManyRelations);
+    super(registry, addValidator, getOneRelations, getManyRelations);
   }
 }

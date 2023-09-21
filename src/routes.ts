@@ -31,6 +31,13 @@ const routes: Route[] = [
     action: "remove",
     public:  true,
   },
+  {
+    method: "get",
+    path: "/tasks/:id",
+    controller: TaskController,
+    action: "one",
+    public:  true,
+  },
 ];
 
 export type { Route };

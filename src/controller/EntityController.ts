@@ -16,7 +16,7 @@ export abstract class EntityController<T> extends Controller {
     //
     // public updateValidator = null,
     //
-    // public getOneRelations = null,
+    public getOneRelations = null,
     //
     public getManyRelations = null,
   ) {
@@ -79,5 +79,21 @@ export abstract class EntityController<T> extends Controller {
       // handle error
       next(error);
     }
+  }
+
+  async one(request: Request, response: Response, next: NextFunction) {
+    let id = await this.idValidator.validate(request.params.id);
+
+    let entity;
+    if (this.getOneRelations) {
+      entity = await this.registry.repository.findOneOrFail({
+        relations: this.getOneRelations,
+        where: { id },
+      });
+    } else {
+      entity = await this.registry.repository.findOneOrFail({ where: { id } });
+    }
+
+    return entity;
   }
 }
