@@ -27,10 +27,10 @@ export class SubtaskController extends EntityController<Subtask> {
 
       const subtasks = await this.all(request, response, next, where);
 
-      return {
+      return this.successResponse({
         task: taskEntity,
         subtasks,
-      };
+      });
     } catch (error) {
       // handle error
       next(error);
@@ -56,7 +56,9 @@ export class SubtaskController extends EntityController<Subtask> {
 
       const entity = await this.registry.repository.save(filtered);
 
-      return await this.registry.getById(entity.id, this.registry);
+      return this.successResponse({
+        entity: await this.registry.getById(entity.id, this.registry),
+      })
     } catch (error) {
       // handle error
       next(error);
@@ -84,7 +86,9 @@ export class SubtaskController extends EntityController<Subtask> {
 
       await this.registry.repository.update(subtask.id, filtered);
 
-      return await this.registry.repository.findOneBy({ id: subtask.id });
+      return this.successResponse({
+        entity: await this.registry.getById(subtask.id, this.registry),
+      })
     } catch (error) {
       // handle error
       next(error);

@@ -53,6 +53,7 @@ export abstract class EntityController<T> extends Controller {
     }
 
     return { count: count * 1, items };
+
   }
 
   async save(request: Request, response: Response, next: NextFunction) {
@@ -63,7 +64,9 @@ export abstract class EntityController<T> extends Controller {
     
     const entity = await this.registry.repository.save(filtered);
 
-    return await this.registry.getById(entity.id, this.registry);
+    return this.successResponse({
+      entity: await this.registry.getById(entity.id, this.registry),
+    })
   }
 
   async remove(request: Request, response: Response, next: NextFunction) {
@@ -79,7 +82,9 @@ export abstract class EntityController<T> extends Controller {
       }
 
       let result = await this.registry.repository.remove(entity);
-      return !!result;
+      return this.successResponse({
+        success: !!result,
+      })
     } catch (error) {
       // handle error
       next(error);
@@ -99,7 +104,9 @@ export abstract class EntityController<T> extends Controller {
       entity = await this.registry.repository.findOneOrFail({ where: { id } });
     }
 
-    return entity;
+    return this.successResponse({
+      entity,
+    })
   }
 
   async patch(request: Request, response: Response, next: NextFunction) {
@@ -113,8 +120,9 @@ export abstract class EntityController<T> extends Controller {
     // remove possible empty objects which come from yup
     for (let key in filtered) if (typeof request.body[key] === "undefined") delete filtered[key];
 
-    let updated = await this.registry.repository.save(Object.assign(entity, filtered));
-    return updated;
+    return this.successResponse({
+      entity: await this.registry.repository.save(Object.assign(entity, filtered)),
+    })
   }
 
   async getEntityId(request: Request): Promise<number> {
