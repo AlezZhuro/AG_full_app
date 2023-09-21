@@ -4,7 +4,7 @@ import { Subtask } from "../entity/Subtask";
 import {
   add as addSchema,
   update as updateSchema,
-} from "../scheme/yup/entities/task";
+} from "../scheme/yup/entities/subtask";
 import * as Registry from "../services/Entity/Subtask/Registry";
 import * as TaskRegistry from "../services/Entity/Task/Registry";
 import { NotFoundError } from "../error/error";
@@ -47,7 +47,7 @@ export class SubtaskController extends EntityController<Subtask> {
 
       const data = this.collect(request);
 
-      let filtered = await this.addValidator.validate(
+      const filtered = await this.addValidator.validate(
         Object.assign(data, { task: { id: taskId } }),
         {
           abortEarly: false,
@@ -57,6 +57,34 @@ export class SubtaskController extends EntityController<Subtask> {
       const entity = await this.registry.repository.save(filtered);
 
       return await this.registry.getById(entity.id, this.registry);
+    } catch (error) {
+      // handle error
+      next(error);
+    }
+  }
+
+  async update(request: Request, response: Response, next: NextFunction) {
+    try {
+      const data = request.body;
+      const taskId = request.params.taskId;
+
+      const filtered = await this.updateValidator.validate(
+        Object.assign(data, { task: { id: taskId } }),
+        {
+          abortEarly: false,
+        },
+      );
+
+      const subtask = await this.registry.repository.findOneOrFail({
+        where: {
+          id: filtered.id,
+          task: { id: filtered.task.id },
+        },
+      });
+
+      await this.registry.repository.update(subtask.id, filtered);
+
+      return await this.registry.repository.findOneBy({ id: subtask.id });
     } catch (error) {
       // handle error
       next(error);

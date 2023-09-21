@@ -17,6 +17,8 @@ export const errorHandler = (error, request, response, next) => {
     return response.status(HttpStatusCode.NOT_FOUND).send({ errors: [error.message] });
   } else if (error.name === "BaseError") {
     return response.status(HttpStatusCode.BAD_REQUEST).send({ errors: [error.message] });
+  } else if (error.name === 'EntityNotFoundError') {
+    return response.status(HttpStatusCode.NOT_FOUND).send({ errors: ["Entity not found"] });
   } else {
     return response.status(HttpStatusCode.BAD_REQUEST).send({ errors: ["error has happened"] });
   }

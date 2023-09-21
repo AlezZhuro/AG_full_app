@@ -67,6 +67,13 @@ const routes: Route[] = [
     action: "createSubtask",
     public:  true,
   },
+  {
+    method: "patch",
+    path: "/task/:taskId/update",
+    controller: SubtaskController,
+    action: "update",
+    public:  true,
+  },
 ];
 
 export type { Route };
