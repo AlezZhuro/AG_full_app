@@ -8,7 +8,7 @@ function buildBackendConnectionOptions() {
     port: +process.env.TYPEORM_BACKEND_PORT || 3306,
     database: process.env.TYPEORM_BACKEND_DATABASE,
     logging: process.env.TYPEORM_BACKEND_LOGGING === "true" ? true : false,
-    synchronize: false,
+    synchronize: true,
     timezone: "+00:00",
   };
 

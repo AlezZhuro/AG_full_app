@@ -1,0 +1,17 @@
+{
+  "name": "Node.js & PostgreSQL",
+  "dockerComposeFile": ["../docker-compose.yml",  "../docker-compose.override.development.yml"],
+  "service": "app",
+  "workspaceFolder": "/app",
+  "shutdownAction": "stopCompose",
+  "extensions": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode"
+  ],
+  "settings": {
+    "node.autoAttach": "on",
+    "prettier.singleQuote": true,
+    "prettier.trailingComma": "all",
+    "prettier.printWidth": 80
+  }
+}
