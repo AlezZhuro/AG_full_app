@@ -53,6 +53,13 @@ const routes: Route[] = [
     action: "allSubtask",
     public:  true,
   },
+  {
+    method: "get",
+    path: "/subtask/:id",
+    controller: SubtaskController,
+    action: "one",
+    public:  true,
+  },
 ];
 
 export type { Route };

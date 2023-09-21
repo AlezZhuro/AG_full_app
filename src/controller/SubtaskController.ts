@@ -16,12 +16,7 @@ export class SubtaskController extends EntityController<Subtask> {
     updateValidator = updateSchema,
     getOneRelations = ["task"],
   ) {
-    super(
-      registry,
-      addValidator,
-      updateValidator,
-      getOneRelations,
-    );
+    super(registry, addValidator, updateValidator, getOneRelations);
   }
 
   async allSubtask(request: Request, response: Response, next: NextFunction) {
@@ -34,7 +29,7 @@ export class SubtaskController extends EntityController<Subtask> {
         throw new NotFoundError("Task not found");
       }
 
-      const where = { task: {id: taskId} };
+      const where = { task: { id: taskId } };
 
       const subtasks = await this.all(request, response, next, where);
 
