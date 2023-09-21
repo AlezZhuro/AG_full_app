@@ -74,6 +74,13 @@ const routes: Route[] = [
     action: "update",
     public:  true,
   },
+  {
+    method: "delete",
+    path: "/subtask/:id",
+    controller: SubtaskController,
+    action: "remove",
+    public:  true,
+  },
 ];
 
 export type { Route };
