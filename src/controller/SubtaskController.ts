@@ -21,13 +21,7 @@ export class SubtaskController extends EntityController<Subtask> {
 
   async allSubtask(request: Request, response: Response, next: NextFunction) {
     try {
-      const taskId = await this.getEntityId(request);
-
-      const taskEntity = await this.registry.getById(taskId, TaskRegistry);
-
-      if (!taskEntity) {
-        throw new NotFoundError("Task not found");
-      }
+      const { taskEntity, taskId } = await this.getParentEntityById(request);
 
       const where = { task: { id: taskId } };
 
@@ -41,5 +35,40 @@ export class SubtaskController extends EntityController<Subtask> {
       // handle error
       next(error);
     }
+  }
+
+  async createSubtask(
+    request: Request,
+    response: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const { taskEntity, taskId } = await this.getParentEntityById(request);
+
+      const data = this.collect(request);
+
+      let filtered = await this.addValidator.validate(Object.assign(data, {task: {id: taskId}}), {
+        abortEarly: false,
+      });      
+
+      const entity = await this.registry.repository.save(filtered);
+
+      return await this.registry.getById(entity.id, this.registry);
+    } catch (error) {
+      // handle error
+      next(error);
+    }
+  }
+
+  async getParentEntityById(request: Request) {
+    const taskId = await this.getEntityId(request);
+
+    const taskEntity = await this.registry.getById(taskId, TaskRegistry);
+
+    if (!taskEntity) {
+      throw new NotFoundError("Task not found");
+    }
+
+    return { taskEntity, taskId };
   }
 }

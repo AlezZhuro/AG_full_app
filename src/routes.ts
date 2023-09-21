@@ -60,6 +60,13 @@ const routes: Route[] = [
     action: "one",
     public:  true,
   },
+  {
+    method: "post",
+    path: "/task/:id/add",
+    controller: SubtaskController,
+    action: "createSubtask",
+    public:  true,
+  },
 ];
 
 export type { Route };
