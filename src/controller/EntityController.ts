@@ -14,7 +14,7 @@ export abstract class EntityController<T> extends Controller {
     //
     public addValidator = null,
     //
-    // public updateValidator = null,
+    public updateValidator = null,
     //
     public getOneRelations = null,
     //
@@ -57,7 +57,6 @@ export abstract class EntityController<T> extends Controller {
     
     const entity = await this.registry.repository.save(filtered);
 
-    console.log({filtered, entity});
     return await this.registry.getById(entity.id, this.registry);
   }
 
@@ -95,5 +94,34 @@ export abstract class EntityController<T> extends Controller {
     }
 
     return entity;
+  }
+
+  async patch(request: Request, response: Response, next: NextFunction) {
+    let entity = await this.getEntity(request);
+    const data = this.collect(request);
+    
+    let filtered = await this.updateValidator.validate(data, {
+      abortEarly: false,
+    });
+
+    // remove possible empty objects which come from yup
+    for (let key in filtered) if (typeof request.body[key] === "undefined") delete filtered[key];
+
+    let updated = await this.registry.repository.save(Object.assign(entity, filtered));
+    return updated;
+  }
+
+  async getEntityId(request: Request): Promise<number> {
+    const data = this.collect(request);
+
+    let id = await this.idValidator.validate(data.id);
+
+    return id;
+  }
+
+  async getEntity(request: Request) {
+    const id = await this.getEntityId(request);
+
+    return await this.registry.repository.findOneOrFail({ where: { id } });
   }
 }

@@ -21,7 +21,7 @@ export abstract class Controller {
 
   collect(request) {
     let data = request.body;
-    data = Object.assign(data, request.query);
+    data = Object.assign(data, request.query, request.params);
 
     return data;
   }

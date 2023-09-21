@@ -38,6 +38,13 @@ const routes: Route[] = [
     action: "one",
     public:  true,
   },
+  {
+    method: "patch",
+    path: "/tasks/:id",
+    controller: TaskController,
+    action: "patch",
+    public:  true,
+  },
 ];
 
 export type { Route };
