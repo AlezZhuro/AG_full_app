@@ -4,7 +4,7 @@ export let add = yup
   .object()
   .shape({
     title: yup.string().required().trim().min(1).max(255),
-    description: yup.string().required().trim().min(1).max(255),
+    description: yup.string().trim().min(1).max(255),
     completed: yup.boolean().default(false),
   })
   .noUnknown(true);
