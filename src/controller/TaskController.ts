@@ -11,9 +11,8 @@ export class TaskController extends EntityController<Task> {
     registry = Registry,
     addValidator = addSchema,
     updateValidator = updateSchema,
-    getOneRelations = null,
-    getManyRelations = ['subtasks'],
+    getOneRelations = ['subtasks'],
   ) {
-    super(registry, addValidator, updateValidator, getOneRelations, getManyRelations);
+    super(registry, addValidator, updateValidator, getOneRelations);
   }
 }

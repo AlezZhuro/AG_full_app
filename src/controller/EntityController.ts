@@ -23,7 +23,12 @@ export abstract class EntityController<T> extends Controller {
     super();
   }
 
-  async all(request: Request, response?: Response, next?: NextFunction, whereCondition?: any) {
+  async all(
+    request: Request,
+    response?: Response,
+    next?: NextFunction,
+    whereCondition?: any,
+  ) {
     const data = this.collect(request);
 
     let where;
@@ -31,10 +36,15 @@ export abstract class EntityController<T> extends Controller {
     if (!!whereCondition && !!Object.keys(whereCondition).length) {
       where = whereCondition;
     }
-    
+
     let pager = await getPager(data);
-    let order = await getOrder(this.registry, data, this.defaultOrder, this.defaultDir);
-  
+    let order = await getOrder(
+      this.registry,
+      data,
+      this.defaultOrder,
+      this.defaultDir,
+    );
+
     if (this.getManyRelations) {
       var [items, count] = await this.registry.repository.findAndCount({
         relations: this.getManyRelations,
@@ -52,8 +62,10 @@ export abstract class EntityController<T> extends Controller {
       });
     }
 
-    return { count: count * 1, items };
-
+    return this.successResponse({
+      count: count * 1,
+      items,
+    });
   }
 
   async save(request: Request, response: Response, next: NextFunction) {
@@ -61,17 +73,17 @@ export abstract class EntityController<T> extends Controller {
     let filtered = await this.addValidator.validate(data, {
       abortEarly: false,
     });
-    
+
     const entity = await this.registry.repository.save(filtered);
 
     return this.successResponse({
       entity: await this.registry.getById(entity.id, this.registry),
-    })
+    });
   }
 
   async remove(request: Request, response: Response, next: NextFunction) {
     try {
-      const id = await this.idValidator.validate( +request.params.id, {
+      const id = await this.idValidator.validate(+request.params.id, {
         abortEarly: false,
       });
 
@@ -84,7 +96,7 @@ export abstract class EntityController<T> extends Controller {
       let result = await this.registry.repository.remove(entity);
       return this.successResponse({
         success: !!result,
-      })
+      });
     } catch (error) {
       // handle error
       next(error);
@@ -106,23 +118,26 @@ export abstract class EntityController<T> extends Controller {
 
     return this.successResponse({
       entity,
-    })
+    });
   }
 
   async patch(request: Request, response: Response, next: NextFunction) {
     let entity = await this.getEntity(request);
     const data = this.collect(request);
-    
+
     let filtered = await this.updateValidator.validate(data, {
       abortEarly: false,
     });
 
     // remove possible empty objects which come from yup
-    for (let key in filtered) if (typeof request.body[key] === "undefined") delete filtered[key];
+    for (let key in filtered)
+      if (typeof request.body[key] === "undefined") delete filtered[key];
 
     return this.successResponse({
-      entity: await this.registry.repository.save(Object.assign(entity, filtered)),
-    })
+      entity: await this.registry.repository.save(
+        Object.assign(entity, filtered),
+      ),
+    });
   }
 
   async getEntityId(request: Request): Promise<number> {
